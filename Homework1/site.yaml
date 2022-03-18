@@ -1,0 +1,8 @@
+# site.yml
+---
+- hosts: aws_ec2
+  roles:
+    - common
+    - docker
+
+# ansible-galaxy init ( in the roles dir )
