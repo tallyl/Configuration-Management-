@@ -1,0 +1,27 @@
+---
+
+- name: Getting Started First Playbook
+  hosts: web
+  remote_user: root
+  become: yes
+  tasks:
+    - name: Create opsschool directory if it does not exist
+      file:
+        path: ~ubuntu/opsschool
+        state: directory
+        mode: '0755'
+
+    - name: Create ansible directory if it does not exist
+      file:
+        path: ~ubuntu/opsschool/ansible
+        state: directory
+        mode: '0755'
+
+    # Create the user 'opsschool'
+    - user:
+        name: opsschool
+        password: $6$kYwvWXy6xVIOZmxX$tonevIoduoPOHrIT7dZC.dDO7We2d9X/48NG6oD6W7p5/aEuUmNPV7xXvdvgCbPSjblZ4rGYnIHCIvb3dk5qF/
+        home: ~ubuntu/opsschool
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        state: present

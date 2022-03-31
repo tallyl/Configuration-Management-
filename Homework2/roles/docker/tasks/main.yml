@@ -1,5 +1,4 @@
 ---
-
 - name: Getting Started First Playbook
   hosts: aws_ec2
   remote_user: root
@@ -49,7 +48,7 @@
       pip:
         name: docker
       notify:
-      - Restart docker
+      - docker restart
 
     - name: Start Docker
         service:
@@ -57,14 +56,21 @@
           state: started
           enabled: yes
 
+    #- name: Create "docker" group
+    #  group:
+    #    name: "{{ docker_group }}"
+    #    state: present
+
+    # sudo usermod -aG docker root
+    - name: Add remote "ubuntu" user to "docker" group
+      user:
+        name: "{{ item }}"
+        group: "docker"
+        append: yes
+        become: true
+        with_items: '{{ docker_users }}'
 
     # Part 2
-    - name: starting nginx
-      ansible.builtin.shell: sudo docker run -d -p 8080:80 nginx
-      ignore_errors: yes
-      args:
-        warn: no
-
     - name: pull and start ngnix container
       docker_container:
         image: ngnix:stable
@@ -74,32 +80,4 @@
         ports:
           - "8888:80"
 
-
-    # Part 3
-    - name: Creating a file with content
-      copy:
-        dest: "~opsschool/tally.txt"
-        content: |
-          I am a text file I exist on the nodes
-
-    - name: Compress regular file and remove it
-      archive:
-        path: "~opsschool/tally.txt"
-        remove: yes
-
-    - name: download  locally
-      get_url:
-        url: http://icanhazip.com
-        dest: /home/ubuntu/index.html
-
-    #- name: Download
-
-    #  action: shell wget http://icanhazip.com > /home/ubunto/index.html
-
-  handlers:
-    - name: Restart docker
-      service:
-        name: docker
-        state: restarted
-
-
+# - include XX.yml

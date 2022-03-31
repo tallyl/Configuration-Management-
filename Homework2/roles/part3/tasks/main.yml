@@ -1,0 +1,27 @@
+---
+
+- name: Part3 - Playing with files and modules
+  hosts: aws_ec2
+  remote_user: root
+  become: yes
+  vars:
+    ansible_ssh_private_key_file: "/home/ubuntu/.ssh/id_rsa"
+    ansible_user: "ubuntu"
+  tasks:
+    # Part 3
+    - name: Creating a file with content
+      copy:
+        dest: "~opsschool/tally.txt"
+        content: |
+          I am a text file I exist on the nodes
+
+    - name: Compress regular file and remove it
+      archive:
+        path: "~opsschool/tally.txt"
+        remove: yes
+
+    - name: download  locally
+      get_url:
+        url: http://icanhazip.com
+        dest: /home/ubuntu/index.html
+
