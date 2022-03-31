@@ -1,2 +1,23 @@
 ---
 # vars file for docker
+ansible_ssh_private_key_file: "/home/ubuntu/.ssh/id_rsa"
+ansible_user: "ubuntu"
+docker_users:
+  - "ubuntu"
+  - "ec2-user"
+
+# Include OS specific tasks
+#- include: CentOS.yml
+#  when: ansible_distribution == "CentOS"
+#- include: Ubuntu.yml
+#  when: ansible_distribution == "Ubuntu"
+#- include: Amazon.yml
+#  when: ansible_distribution == "Amazon"
+
+    #- name: gather os specific variables
+    #debug: msg="{{ ansible_distribution }}"
+    #include_vars: "{{ item }}"
+    #with_first_found:
+    # - "{{ ansible_distribution }}-{{ ansible_distribution_major_version}}.yml"
+    #- "{{ ansible_distribution }}.yml"
+    #tags: vars

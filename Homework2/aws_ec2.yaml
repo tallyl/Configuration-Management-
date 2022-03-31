@@ -1,12 +1,13 @@
-plugin: amazon.aws.aws_ec2
+---
+plugin: aws_ec2
 
 # set the regions.
 regions:
   - us-east-1
 filters:
-  instance-state-name : running
+  instance-state-name: running
   tag:Name:
     - Tally-Node1
     - Tally-Node0
- compose:
+compose:
   ansible_host: private_ip_address
