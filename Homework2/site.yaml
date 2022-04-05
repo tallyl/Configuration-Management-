@@ -1,9 +1,51 @@
 # site.yml
 ---
-- hosts: aws_ec2
+- hosts: localhost
+  pre_tasks:
+  - name: Refresh Inventory
+    meta: refresh_inventory
+
+
+- hosts: Distro_Ubuntu
   become: yes
+  gather_facts: true
+  remote_user: ubuntu 
+  #  vars_prompt:
+  #  - name: ubuntu_docker_version
+  #     prompt: docker-ce version to install on ubuntu noded?
+  #     default: 5:20.10.14~3-0~ubuntu-focal 
   roles:
-    - common
+          #    - common
+    - docker
+
+- hosts: Distro_Red_Hat
+  become: yes
+  gather_facts: true
+  remote_user: ec2-user 
+  vars_prompt:
+    - name: docker_version
+      prompt: docker-ce version to install on RedHat - must be centos8 compatible ?
+      default: docker-ce-19.03.15-3.el8.src.rpm   
+  roles:
+          #    - common
+    - docker
+
+
+- hosts: Distro_CentOS
+  become: yes
+  gather_facts: true
+  remote_user: centos 
+  roles:
+          #    - common
+    - docker
+
+
+- hosts: Distro_Amazon
+  become: yes
+  gather_facts: true
+  remote_user: ec2-user
+  roles:
+          #    - common
     - docker
 
 # ansible-galaxy init ( in the roles dir )

@@ -1,4 +1,8 @@
 ---
+- name: Print all available facts
+  ansible.builtin.debug:
+    var: ansible_distribution
+
 # Include OS specific tasks
 - include: CentOS.yml
   when: ansible_distribution == "CentOS"
@@ -6,3 +10,5 @@
   when: ansible_distribution == "Ubuntu"
 - include: Amazon.yml
   when: ansible_distribution == "Amazon"
+- include: Red-Hat.yml
+  when: ansible_distribution == "RedHat"

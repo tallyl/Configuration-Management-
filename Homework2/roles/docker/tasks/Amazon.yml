@@ -1,0 +1,73 @@
+---
+- name: gather os specific variables
+  #debug: msg="{{ ansible_distribution }}"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "{{ ansible_distribution }}-{{ ansible_distribution_major_version}}.yml"
+    - "{{ ansible_distribution }}.yml"
+  tags: vars
+
+- name: Run the equivalent of "yum update" as a separate step
+  yum:
+    name: '*'
+    state: latest
+    update_cache: true
+
+- name: Install required system packages
+  yum:
+    name: "{{ packages }}"
+    state: latest
+    update_cache: true
+  vars:
+    packages:
+      - python3
+      - python3-pip
+      - yum-utils
+      - device-mapper-persistent-data
+      - lvm2
+      - amazon-linux-extras
+
+- name: Add extras repository
+  shell: yum-config-manager --enable extras
+
+- name: Install docker-ce (centos) via amazon-linux-extras packages
+  shell: "amazon-linux-extras install docker=18.06.1 -y"
+
+- name: Enable Docker CE service at startup
+  service:
+    name: docker
+    state: started
+    enabled: true
+
+- name: Ensure Python pip packages are installed
+  pip:
+    name: "{{ packages }}"
+    executable: pip3
+  vars:
+    packages:
+      - boto
+      - boto3
+      - docker-compose
+  notify:
+    - docker restart
+
+# sudo usermod -aG docker root
+- name: Add remote "o/s" user to "docker" group
+  user:
+    name: "{{item}}"
+    groups: "docker"
+    append: yes
+  with_items: '{{ docker_users }}'
+  when: 'docker_users is defined'
+
+# Part 2
+- name: pull and start ngnix container
+  docker_container:
+    image: nginx:stable
+    name: nginx
+    auto_remove: true
+    state: started
+    ports:
+      - "8888:80"
+
+# - include XX.yml

@@ -9,5 +9,13 @@ filters:
   tag:Name:
     - Tally-Node1
     - Tally-Node0
+    - Tally-Node3
+keyed_groups:
+  - key: tags.Distro
+    prefix: Distro
+    #hostnames:
+    #  - tag: Name
+    #  - tag: Distro
 compose:
   ansible_host: private_ip_address
+  ansible_user: "{{ 'ubuntu' if (Distro == 'Ubuntu') else ('ec2-user') }}"

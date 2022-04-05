@@ -79,6 +79,6 @@
     auto_remove: true
     state: started
     ports:
-      - "80:80"
+      - "8888:80"
 
 # - include XX.yml
