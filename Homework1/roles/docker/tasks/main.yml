@@ -36,9 +36,14 @@
 
     - name: Update apt and install docker-ce
       apt:
-        name: docker-ce
+        name: "{{item}}"
+        #name: docker-ce
         state: latest
         update_cache: true
+      loop:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
 
     - name: Install Docker Module for Python
       pip:
@@ -46,12 +51,29 @@
       notify:
       - Restart docker
 
+    - name: Start Docker
+        service:
+          name: docker
+          state: started
+          enabled: yes
+
+
     # Part 2
     - name: starting nginx
       ansible.builtin.shell: sudo docker run -d -p 8080:80 nginx
       ignore_errors: yes
       args:
         warn: no
+
+    - name: pull and start ngnix container
+      docker_container:
+        image: ngnix:stable
+        name: ngnix
+        auto_remove: true
+        state: started
+        ports:
+          - "8888:80"
+
 
     # Part 3
     - name: Creating a file with content
